@@ -1,0 +1,47 @@
+#-*-内存共享-*-
+-*-分享方-*-
+//创建文件映射，"dhdController"相当于密令
+m_hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE,NULL,PAGE_READWRITE ,0,sizeof(cMyControllerData),"dhdController");
+// open connection to virtual device
+m_lpMapAddress = MapViewOfFile(
+      m_hMapFile,
+      FILE_MAP_ALL_ACCESS,
+      0,
+      0,
+      0);
+// map memory 映射内存
+ m_pDevice = (cMyControllerData*)m_lpMapAddress;
+
+-*-获取方
+// search for virtual device
+m_hMapFile = OpenFileMapping(
+        FILE_MAP_ALL_ACCESS,
+        FALSE,
+        "dhdController");
+
+// no virtual device available
+    if (m_hMapFile == NULL)
+    {
+        m_deviceReady = false;
+        m_deviceAvailable = false;
+        return;
+    }
+
+   // open connection to virtual device
+    m_lpMapAddress = MapViewOfFile(
+      m_hMapFile,
+      FILE_MAP_ALL_ACCESS,
+      0,
+      0,
+      0);
+
+   // check whether connection succeeded
+    if (m_lpMapAddress == NULL)
+    {
+        m_deviceReady = false;
+        m_deviceAvailable = false;
+        return;
+    }
+
+    // map memory
+    m_pDevice = (cMyCustomDeviceData*)m_lpMapAddress;
