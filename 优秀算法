@@ -1,0 +1,15 @@
+1、平方根倒数算法：
+//该函数的相对误差约为0.177585%，速度比C标准库的sqrt提高超过20%。
+//最优秀的常数是0x5f375a86。如果换成64位的double版本的话，算法还是一样的，而最优常数则为0x5fe6ec85e7de30da
+float invSqrt(float x) 
+{
+	float halfx = 0.5f * x;
+	float y = x;
+	
+	long i = *(long*)&y;                //get bits for floating value
+	i = 0x5f3759df - (i >> 1);          // 计算第一个近似根
+	y = *(float*)&i;                    //convert bits back to float
+	y = y * (1.5f - (halfx * y * y));   //牛顿迭代法, repeating increases accuracy
+	
+	return y;
+}
